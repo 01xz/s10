@@ -21,11 +21,11 @@ int main(int argc, char **argv) {
     switch (opt) {
       case 'i':
         infile = optarg;
-        printf("infile:%s\n", infile);
+        printf("infile: %s\n", infile);
         break;
       case 'o':
         outfile = optarg;
-        printf("outfile:%s\n", outfile);
+        printf("outfile: %s\n", outfile);
         break;
       default:
         printf("Usage: fieldsolver2d -in input.data –out result.out\n");
