@@ -1,0 +1,175 @@
+main.c: In function ‘main’:
+main.c:66:29: warning: initialization of ‘double **’ from incompatible pointer type ‘int **’ [-Wincompatible-pointer-types]
+   66 |    double** storage_net_p = storage_net(net_input);
+      |                             ^~~~~~~~~~~
+main.c:68:70: warning: passing argument 3 of ‘minimum_spacing’ from incompatible pointer type [-Wincompatible-pointer-types]
+   68 |    double** block_net_p   = minimum_spacing(net_input, storage_net_p,&min_spacing_net_x, &min_spacing_net_y);
+      |                                                                      ^~~~~~~~~~~~~~~~~~
+      |                                                                      |
+      |                                                                      double **
+main.c:32:76: note: expected ‘double *’ but argument is of type ‘double **’
+   32 | int** minimum_spacing(double net_input[][16], double** net_outline,double* min_spacing_net_x, double* min_spacing_net_y);
+      |                                                                    ~~~~~~~~^~~~~~~~~~~~~~~~~
+main.c:68:90: warning: passing argument 4 of ‘minimum_spacing’ from incompatible pointer type [-Wincompatible-pointer-types]
+   68 |    double** block_net_p   = minimum_spacing(net_input, storage_net_p,&min_spacing_net_x, &min_spacing_net_y);
+      |                                                                                          ^~~~~~~~~~~~~~~~~~
+      |                                                                                          |
+      |                                                                                          double **
+main.c:32:103: note: expected ‘double *’ but argument is of type ‘double **’
+   32 | int** minimum_spacing(double net_input[][16], double** net_outline,double* min_spacing_net_x, double* min_spacing_net_y);
+      |                                                                                               ~~~~~~~~^~~~~~~~~~~~~~~~~
+main.c:68:29: warning: initialization of ‘double **’ from incompatible pointer type ‘int **’ [-Wincompatible-pointer-types]
+   68 |    double** block_net_p   = minimum_spacing(net_input, storage_net_p,&min_spacing_net_x, &min_spacing_net_y);
+      |                             ^~~~~~~~~~~~~~~
+main.c:117:77: warning: passing argument 2 of ‘extend_net_coordinate_x’ from incompatible pointer type [-Wincompatible-pointer-types]
+  117 |    double* extend_net_coordinate_x_p = extend_net_coordinate_x(block_net_p, &min_spacing_net_x,&count_epitaxial_del_cloumn_x);
+      |                                                                             ^~~~~~~~~~~~~~~~~~
+      |                                                                             |
+      |                                                                             double **
+main.c:33:59: note: expected ‘double *’ but argument is of type ‘double **’
+   33 | int extend_net_coordinate_x(double** block_net_p, double* min_spacing_net_x,int *count_epitaxial_del_cloumn_x);
+      |                                                   ~~~~~~~~^~~~~~~~~~~~~~~~~
+main.c:117:96: warning: passing argument 3 of ‘extend_net_coordinate_x’ from incompatible pointer type [-Wincompatible-pointer-types]
+  117 |    double* extend_net_coordinate_x_p = extend_net_coordinate_x(block_net_p, &min_spacing_net_x,&count_epitaxial_del_cloumn_x);
+      |                                                                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                |
+      |                                                                                                int **
+main.c:33:82: note: expected ‘int *’ but argument is of type ‘int **’
+   33 | int extend_net_coordinate_x(double** block_net_p, double* min_spacing_net_x,int *count_epitaxial_del_cloumn_x);
+      |                                                                             ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.c:117:40: warning: initialization of ‘double *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  117 |    double* extend_net_coordinate_x_p = extend_net_coordinate_x(block_net_p, &min_spacing_net_x,&count_epitaxial_del_cloumn_x);
+      |                                        ^~~~~~~~~~~~~~~~~~~~~~~
+main.c:118:77: warning: passing argument 2 of ‘extend_net_coordinate_y’ from incompatible pointer type [-Wincompatible-pointer-types]
+  118 |    double* extend_net_coordinate_y_p = extend_net_coordinate_y(block_net_p, &min_spacing_net_y,&count_epitaxial_del_cloumn_y);
+      |                                                                             ^~~~~~~~~~~~~~~~~~
+      |                                                                             |
+      |                                                                             double **
+main.c:34:59: note: expected ‘double *’ but argument is of type ‘double **’
+   34 | int extend_net_coordinate_y(double** block_net_p, double* min_spacing_net_y,int* count_epitaxial_del_cloumn_y);
+      |                                                   ~~~~~~~~^~~~~~~~~~~~~~~~~
+main.c:118:96: warning: passing argument 3 of ‘extend_net_coordinate_y’ from incompatible pointer type [-Wincompatible-pointer-types]
+  118 |    double* extend_net_coordinate_y_p = extend_net_coordinate_y(block_net_p, &min_spacing_net_y,&count_epitaxial_del_cloumn_y);
+      |                                                                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                |
+      |                                                                                                int **
+main.c:34:82: note: expected ‘int *’ but argument is of type ‘int **’
+   34 | int extend_net_coordinate_y(double** block_net_p, double* min_spacing_net_y,int* count_epitaxial_del_cloumn_y);
+      |                                                                             ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.c:118:40: warning: initialization of ‘double *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  118 |    double* extend_net_coordinate_y_p = extend_net_coordinate_y(block_net_p, &min_spacing_net_y,&count_epitaxial_del_cloumn_y);
+      |                                        ^~~~~~~~~~~~~~~~~~~~~~~
+main.c:120:74: warning: passing argument 4 of ‘mesh_divide_x_p’ from incompatible pointer type [-Wincompatible-pointer-types]
+  120 |    mesh_divide_x_p(extend_net_coordinate_x_p, storage_net_p,block_net_p, &min_spacing_net_x,& count_epitaxial_del_cloumn_x, ext_block_coordinate,ext_net_coordinate);
+      |                                                                          ^~~~~~~~~~~~~~~~~~
+      |                                                                          |
+      |                                                                          double **
+main.c:39:82: note: expected ‘double *’ but argument is of type ‘double **’
+   39 | void mesh_divide_x_p(double* ext_coor_x_p, double** net, double** block, double* min_spac_x, int* cnt_clmn_x, double* ext_block_coordinate, double* ext_net_coordinate);
+      |                                                                          ~~~~~~~~^~~~~~~~~~
+main.c:120:93: warning: passing argument 5 of ‘mesh_divide_x_p’ from incompatible pointer type [-Wincompatible-pointer-types]
+  120 |    mesh_divide_x_p(extend_net_coordinate_x_p, storage_net_p,block_net_p, &min_spacing_net_x,& count_epitaxial_del_cloumn_x, ext_block_coordinate,ext_net_coordinate);
+      |                                                                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                             |
+      |                                                                                             int **
+main.c:39:99: note: expected ‘int *’ but argument is of type ‘int **’
+   39 | void mesh_divide_x_p(double* ext_coor_x_p, double** net, double** block, double* min_spac_x, int* cnt_clmn_x, double* ext_block_coordinate, double* ext_net_coordinate);
+      |                                                                                              ~~~~~^~~~~~~~~~
+main.c:120:125: warning: passing argument 6 of ‘mesh_divide_x_p’ from incompatible pointer type [-Wincompatible-pointer-types]
+  120 |    mesh_divide_x_p(extend_net_coordinate_x_p, storage_net_p,block_net_p, &min_spacing_net_x,& count_epitaxial_del_cloumn_x, ext_block_coordinate,ext_net_coordinate);
+      |                                                                                                                             ^~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                             |
+      |                                                                                                                             double **
+main.c:39:119: note: expected ‘double *’ but argument is of type ‘double **’
+   39 | void mesh_divide_x_p(double* ext_coor_x_p, double** net, double** block, double* min_spac_x, int* cnt_clmn_x, double* ext_block_coordinate, double* ext_net_coordinate);
+      |                                                                                                               ~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+main.c:120:146: warning: passing argument 7 of ‘mesh_divide_x_p’ from incompatible pointer type [-Wincompatible-pointer-types]
+  120 |    mesh_divide_x_p(extend_net_coordinate_x_p, storage_net_p,block_net_p, &min_spacing_net_x,& count_epitaxial_del_cloumn_x, ext_block_coordinate,ext_net_coordinate);
+      |                                                                                                                                                  ^~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                  |
+      |                                                                                                                                                  double **
+main.c:39:149: note: expected ‘double *’ but argument is of type ‘double **’
+   39 | void mesh_divide_x_p(double* ext_coor_x_p, double** net, double** block, double* min_spac_x, int* cnt_clmn_x, double* ext_block_coordinate, double* ext_net_coordinate);
+      |                                                                                                                                             ~~~~~~~~^~~~~~~~~~~~~~~~~~
+main.c:121:75: warning: passing argument 4 of ‘mesh_divide_y_p’ from incompatible pointer type [-Wincompatible-pointer-types]
+  121 |    mesh_divide_y_p(extend_net_coordinate_y_p, storage_net_p, block_net_p, &min_spacing_net_y,&count_epitaxial_del_cloumn_y,ext_block_coordinate, ext_net_coordinate);
+      |                                                                           ^~~~~~~~~~~~~~~~~~
+      |                                                                           |
+      |                                                                           double **
+main.c:40:95: note: expected ‘double *’ but argument is of type ‘double **’
+   40 | void mesh_divide_y_p(double* extend_net_coordinate_y_p, double** net, double** block, double* min_spacing_net_y, int* count_epitaxial_del_cloumn_y, double* ext_block_coordinate, double* ext_net_coordinate);
+      |                                                                                       ~~~~~~~~^~~~~~~~~~~~~~~~~
+main.c:121:94: warning: passing argument 5 of ‘mesh_divide_y_p’ from incompatible pointer type [-Wincompatible-pointer-types]
+  121 |    mesh_divide_y_p(extend_net_coordinate_y_p, storage_net_p, block_net_p, &min_spacing_net_y,&count_epitaxial_del_cloumn_y,ext_block_coordinate, ext_net_coordinate);
+      |                                                                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                              |
+      |                                                                                              int **
+main.c:40:119: note: expected ‘int *’ but argument is of type ‘int **’
+   40 | void mesh_divide_y_p(double* extend_net_coordinate_y_p, double** net, double** block, double* min_spacing_net_y, int* count_epitaxial_del_cloumn_y, double* ext_block_coordinate, double* ext_net_coordinate);
+      |                                                                                                                  ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.c:121:124: warning: passing argument 6 of ‘mesh_divide_y_p’ from incompatible pointer type [-Wincompatible-pointer-types]
+  121 |    mesh_divide_y_p(extend_net_coordinate_y_p, storage_net_p, block_net_p, &min_spacing_net_y,&count_epitaxial_del_cloumn_y,ext_block_coordinate, ext_net_coordinate);
+      |                                                                                                                            ^~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                            |
+      |                                                                                                                            double **
+main.c:40:157: note: expected ‘double *’ but argument is of type ‘double **’
+   40 | void mesh_divide_y_p(double* extend_net_coordinate_y_p, double** net, double** block, double* min_spacing_net_y, int* count_epitaxial_del_cloumn_y, double* ext_block_coordinate, double* ext_net_coordinate);
+      |                                                                                                                                                     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+main.c:121:146: warning: passing argument 7 of ‘mesh_divide_y_p’ from incompatible pointer type [-Wincompatible-pointer-types]
+  121 |    mesh_divide_y_p(extend_net_coordinate_y_p, storage_net_p, block_net_p, &min_spacing_net_y,&count_epitaxial_del_cloumn_y,ext_block_coordinate, ext_net_coordinate);
+      |                                                                                                                                                  ^~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                  |
+      |                                                                                                                                                  double **
+main.c:40:187: note: expected ‘double *’ but argument is of type ‘double **’
+   40 | void mesh_divide_y_p(double* extend_net_coordinate_y_p, double** net, double** block, double* min_spacing_net_y, int* count_epitaxial_del_cloumn_y, double* ext_block_coordinate, double* ext_net_coordinate);
+      |                                                                                                                                                                                   ~~~~~~~~^~~~~~~~~~~~~~~~~~
+main.c: At top level:
+main.c:141:6: error: conflicting types for ‘mesh_divide_x_p’; have ‘void(double *, double **, double **, double *, int *, double **, double **)’
+  141 | void mesh_divide_x_p(double* ext_coor_x_p, double** net, double** block, double* min_spac_x, int* cnt_clmn_x, double **ext_block_coordinate, double **ext_net_coordinate)
+      |      ^~~~~~~~~~~~~~~
+main.c:39:6: note: previous declaration of ‘mesh_divide_x_p’ with type ‘void(double *, double **, double **, double *, int *, double *, double *)’
+   39 | void mesh_divide_x_p(double* ext_coor_x_p, double** net, double** block, double* min_spac_x, int* cnt_clmn_x, double* ext_block_coordinate, double* ext_net_coordinate);
+      |      ^~~~~~~~~~~~~~~
+main.c: In function ‘mesh_divide_x_p’:
+main.c:181:29: warning: initialization of ‘int *’ from incompatible pointer type ‘double *’ [-Wincompatible-pointer-types]
+  181 |     int* unif_div_numbs_x = (double*)malloc((*cnt_clmn_x - 2) * sizeof(double*));  //uniform_filigree_divide_numbs_x
+      |                             ^
+main.c:414:13: error: ‘ext_net_coordinate’ redeclared as different kind of symbol
+  414 |    double** ext_net_coordinate = (double**)malloc(net_input_row * sizeof(double));
+      |             ^~~~~~~~~~~~~~~~~~
+main.c:141:151: note: previous definition of ‘ext_net_coordinate’ with type ‘double **’
+  141 | void mesh_divide_x_p(double* ext_coor_x_p, double** net, double** block, double* min_spac_x, int* cnt_clmn_x, double **ext_block_coordinate, double **ext_net_coordinate)
+      |                                                                                                                                              ~~~~~~~~~^~~~~~~~~~~~~~~~~~
+main.c:452:13: error: ‘ext_block_coordinate’ redeclared as different kind of symbol
+  452 |    double** ext_block_coordinate = (double**)malloc(cnt_x * sizeof(double));
+      |             ^~~~~~~~~~~~~~~~~~~~
+main.c:141:120: note: previous definition of ‘ext_block_coordinate’ with type ‘double **’
+  141 | void mesh_divide_x_p(double* ext_coor_x_p, double** net, double** block, double* min_spac_x, int* cnt_clmn_x, double **ext_block_coordinate, double **ext_net_coordinate)
+      |                                                                                                               ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+main.c: At top level:
+main.c:505:6: error: conflicting types for ‘mesh_divide_y_p’; have ‘void(double *, double **, double **, double *, int *, double **, double **)’
+  505 | void mesh_divide_y_p(double* ext_coor_y_p, double** net, double** block, double* min_spac_y, int* cnt_clmn_y, double** ext_block_coordinate, double** ext_net_coordinate)
+      |      ^~~~~~~~~~~~~~~
+main.c:40:6: note: previous declaration of ‘mesh_divide_y_p’ with type ‘void(double *, double **, double **, double *, int *, double *, double *)’
+   40 | void mesh_divide_y_p(double* extend_net_coordinate_y_p, double** net, double** block, double* min_spacing_net_y, int* count_epitaxial_del_cloumn_y, double* ext_block_coordinate, double* ext_net_coordinate);
+      |      ^~~~~~~~~~~~~~~
+main.c: In function ‘mesh_divide_y_p’:
+main.c:545:30: warning: initialization of ‘int *’ from incompatible pointer type ‘double *’ [-Wincompatible-pointer-types]
+  545 |     int * unif_div_numbs_y = (double*)malloc((*cnt_clmn_y - 2) / 2 * sizeof(double*)); //uniform_filigree_divide_numbs_y
+      |                              ^
+main.c: In function ‘extend_net_coordinate_x’:
+main.c:1050:12: warning: returning ‘double *’ from a function with return type ‘int’ makes integer from pointer without a cast [-Wint-conversion]
+ 1050 |     return epitaxial_extend_del_x;
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+main.c: In function ‘extend_net_coordinate_y’:
+main.c:1236:12: warning: returning ‘double *’ from a function with return type ‘int’ makes integer from pointer without a cast [-Wint-conversion]
+ 1236 |     return epitaxial_extend_del_y;
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+main.c: In function ‘minimum_spacing’:
+main.c:1410:12: warning: returning ‘double **’ from a function with incompatible return type ‘int **’ [-Wincompatible-pointer-types]
+ 1410 |     return block_net;
+      |            ^~~~~~~~~
+main.c: In function ‘storage_net’:
+main.c:1489:12: warning: returning ‘double **’ from a function with incompatible return type ‘int **’ [-Wincompatible-pointer-types]
+ 1489 |     return net_outline;
+      |            ^~~~~~~~~~~
