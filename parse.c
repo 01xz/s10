@@ -7,6 +7,7 @@
 #define SHAPEN_LEN 6
 #define RECT_SIZE  4
 #define TPZD_SIZE  16
+#define SHAPE_NAME "net"
 #define INIT_SHAPE "net0"
 
 #define DEBUG
@@ -94,16 +95,15 @@ int main(int argc, char **argv) {
   int * shps = (int *) malloc(sizeof(int) * shpnm);
 
   // file parsing
+  double * nets_p = nets;
   while (fscanf(fp, "%s", word) == 1) {
     if (!strcmp(word, "boundary")) {
-      printf("obtained: %s\n", word);
       for (int i = 0; i < RECT_SIZE; i++) {
         fscanf(fp, "%lf", boundary + i);
       }
       continue;
     }
     if (!strcmp(word, "dielectric")) {
-      printf("obtained: %s\n", word);
       fscanf(fp, "%lf", dielectric);
       continue;
     }
@@ -112,6 +112,10 @@ int main(int argc, char **argv) {
     }
     if (!strncmp(word, "net", 3)) {
       shps[atoi(word + 3)]++;
+      for (int i = 0; i < RECT_SIZE; i++) {
+        fscanf(fp, "%lf", nets_p + i);
+      }
+      nets_p += RECT_SIZE;
     }
   }
 
@@ -129,7 +133,10 @@ int main(int argc, char **argv) {
   for (int i = 0; i < shpnm; i++) {
     printf("%d\t", shps[i]);
   }
-  printf("\n");
+  printf("\nthe nets:\n");
+  for (int i = 0; i < netnm * RECT_SIZE; i++) {
+    printf("%f\n", nets[i]);
+  }
 #endif
 
   return 0;
