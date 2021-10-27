@@ -3,18 +3,21 @@
 #include <string.h>
 #include <getopt.h>
 
-#define DEBUG
+#define WORD_LEN   12
+#define SHAPEN_LEN 6
+#define RECT_SIZE  4
+#define TPZD_SIZE  16
+#define INIT_SHAPE "net0"
 
-#define WORDS_LEN 12
-#define NETSN_LEN 6
+#define DEBUG
 
 int main(int argc, char **argv) {
   // the Input Path INDex and the Output Path INDex
   int ipind, opind;
   int ch;
-  char words[WORDS_LEN];
-  char netsn[NETSN_LEN] = "net0";
-  int netsnm = 0;
+  char word[WORD_LEN];
+  char shpn[SHAPEN_LEN] = INIT_SHAPE;
+  int shpnm = 0, netnm = 0;
   FILE * fp;
 
   // options parsing related
@@ -25,10 +28,6 @@ int main(int argc, char **argv) {
     {"in",  required_argument, NULL, 'i'},
     {"out", required_argument, NULL, 'o'}
   };
-
-  // data
-  double boundary[4] = {0.0};
-  double dielectric  = 0.0;
 
   // quit if using the wrong options
   if ( argc != 5 ) {
@@ -64,6 +63,7 @@ int main(int argc, char **argv) {
 
 #ifdef DEBUG
   // check the input file
+  printf("\ncheck the input file:\n");
   while ((ch = getc(fp)) != EOF) {
     printf("%c", ch);
   }
@@ -71,32 +71,47 @@ int main(int argc, char **argv) {
 #endif
   
   // nets counter
-  while (fscanf(fp, "%s", words) == 1) {
-    while (strcmp(words, netsn))
+  while (fscanf(fp, "%s", word) == 1) {
+    if (!strcmp(word, shpn)) {
+      shpnm++;
+      sprintf(shpn, "net%d", shpnm);
+    }
+    if (!strcmp(word, "net")) {
+      netnm++;
+    }
   }
   rewind(fp);
+  sprintf(shpn, INIT_SHAPE);
+#ifdef DEBUG
+  printf("%d shapes and %d nets in total.\n", shpnm, netnm);
+#endif
+
+  // 'boundary' and 'dielectric'
+  double * boundary = (double *) malloc(sizeof(double) * RECT_SIZE);
+  double * dielectric = (double *) malloc(sizeof(double));
+  // create 'nets' for recoding coords and 'shps' for recording different shapes
+  double * nets = (double *) malloc(sizeof(double) * netnm * RECT_SIZE);
+  int * shps = (int *) malloc(sizeof(int) * shpnm);
 
   // file parsing
-  while (fscanf(fp, "%s", words) == 1) {
-    if (!strcmp(words, "boundary")) {
-      printf("obtained: %s\n", words);
-      for (int i = 0; i < 4; i++) {
+  while (fscanf(fp, "%s", word) == 1) {
+    if (!strcmp(word, "boundary")) {
+      printf("obtained: %s\n", word);
+      for (int i = 0; i < RECT_SIZE; i++) {
         fscanf(fp, "%lf", boundary + i);
       }
       continue;
     }
-    if (!strcmp(words, "dielectric")) {
-      printf("obtained: %s\n", words);
-      fscanf(fp, "%lf", &dielectric);
+    if (!strcmp(word, "dielectric")) {
+      printf("obtained: %s\n", word);
+      fscanf(fp, "%lf", dielectric);
       continue;
     }
-    if (!strcmp(words, "net")) {
-      printf("obtained: %s\n", words);
+    if (!strcmp(word, "net")) {
       continue;
     }
-    if (!strcmp(words, netsn)) {
-      netsnm++;
-      strcpy();
+    if (!strncmp(word, "net", 3)) {
+      shps[atoi(word + 3)]++;
     }
   }
 
@@ -107,9 +122,14 @@ int main(int argc, char **argv) {
   printf("check the obtained data structure:\n");
   printf("the boundary:\n");
   for (int i = 0; i < 4; i++) {
-   printf("%f\t", boundary[i]);
+   printf("%f\t", *(boundary + i));
   }
-  printf("\nthe dielectric:\n%f\n", dielectric);
+  printf("\nthe dielectric:\n%f\n", *dielectric);
+  printf("the shapes:\n");
+  for (int i = 0; i < shpnm; i++) {
+    printf("%d\t", shps[i]);
+  }
+  printf("\n");
 #endif
 
   return 0;
