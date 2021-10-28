@@ -1,3 +1,5 @@
+parse
+*.data
 # Prerequisites
 *.d
 

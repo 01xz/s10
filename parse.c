@@ -7,8 +7,9 @@
 #define SHAPEN_LEN 6
 #define RECT_SIZE  4
 #define TPZD_SIZE  16
-#define SHAPE_NAME "net"
-#define INIT_SHAPE "net0"
+#define SHAPEG_NAME "net"
+#define SHAPEGN_LEN strlen(SHAPEG_NAME)
+#define INIT_SHAPE SHAPEG_NAME "0"
 
 #define DEBUG
 
@@ -75,9 +76,9 @@ int main(int argc, char **argv) {
   while (fscanf(fp, "%s", word) == 1) {
     if (!strcmp(word, shpn)) {
       shpnm++;
-      sprintf(shpn, "net%d", shpnm);
+      sprintf(shpn, SHAPEG_NAME "%d", shpnm);
     }
-    if (!strcmp(word, "net")) {
+    if (!strcmp(word, SHAPEG_NAME)) {
       netnm++;
     }
   }
@@ -87,14 +88,14 @@ int main(int argc, char **argv) {
   printf("%d shapes and %d nets in total.\n", shpnm, netnm);
 #endif
 
-  // 'boundary' and 'dielectric'
+  // create 'boundary' and 'dielectric'
   double * boundary = (double *) malloc(sizeof(double) * RECT_SIZE);
   double * dielectric = (double *) malloc(sizeof(double));
   // create 'nets' for recoding coords and 'shps' for recording different shapes
   double * nets = (double *) malloc(sizeof(double) * netnm * RECT_SIZE);
   int * shps = (int *) malloc(sizeof(int) * shpnm);
 
-  // file parsing
+  // input file parsing
   double * nets_p = nets;
   while (fscanf(fp, "%s", word) == 1) {
     if (!strcmp(word, "boundary")) {
@@ -107,11 +108,11 @@ int main(int argc, char **argv) {
       fscanf(fp, "%lf", dielectric);
       continue;
     }
-    if (!strcmp(word, "net")) {
+    if (!strcmp(word, SHAPEG_NAME)) {
       continue;
     }
-    if (!strncmp(word, "net", 3)) {
-      shps[atoi(word + 3)]++;
+    if (!strncmp(word, SHAPEG_NAME, SHAPEGN_LEN)) {
+      shps[atoi(word + SHAPEGN_LEN)]++;
       for (int i = 0; i < RECT_SIZE; i++) {
         fscanf(fp, "%lf", nets_p + i);
       }
@@ -138,6 +139,30 @@ int main(int argc, char **argv) {
     printf("%f\n", nets[i]);
   }
 #endif
+
+  // TODO: insert the solver here:
+
+  // create the output data
+  if ((fp = fopen(argv[opind], "w")) == NULL) {
+    printf("Failed to create the output data!\n");
+    exit(EXIT_FAILURE);
+  }
+
+#ifdef DEBUG
+  // output data test
+  fprintf(fp, "# length = 1um\n");
+  fprintf(fp, "# master = net0\n");
+  for (int i = 0; i < shpnm; i++) {
+    fprintf(fp, "%*s" SHAPEG_NAME "%d", 10, "", i);
+  }
+  fprintf(fp, "\n " INIT_SHAPE ":");
+  for (int i = 0; i < shpnm; i++) {
+    fprintf(fp, "%*s%.8ffF", i ? 3 : 1, "", 0.00107424);
+  }
+  fprintf(fp, "\n");
+#endif
+
+  fclose(fp);
 
   return 0;
 }
