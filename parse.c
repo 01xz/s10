@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
   };
 
   // quit if using the wrong options
-  if ( argc != 5 ) {
+  if (argc != 5) {
     printf("Usage: fieldsolver2d -in input.data –out result.out\n");
     exit(EXIT_FAILURE);
   }
@@ -166,3 +166,4 @@ int main(int argc, char **argv) {
 
   return 0;
 }
+
