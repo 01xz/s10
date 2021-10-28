@@ -3,13 +3,13 @@
 #include <string.h>
 #include <getopt.h>
 
-#define WORD_LEN   12
-#define SHAPEN_LEN 6
-#define RECT_SIZE  4
-#define TPZD_SIZE  16
+#define WORD_LEN    12
+#define SHAPEN_LEN  6
+#define RECT_SIZE   4
+#define TPZD_SIZE   16
 #define SHAPEG_NAME "net"
 #define SHAPEGN_LEN strlen(SHAPEG_NAME)
-#define INIT_SHAPE SHAPEG_NAME "0"
+#define INIT_SHAPE  SHAPEG_NAME "0"
 
 #define DEBUG
 
