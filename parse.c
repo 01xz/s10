@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
   printf("check the obtained data structure:\n");
   printf("the boundary:\n");
   for (int i = 0; i < 4; i++) {
-   printf("%f\t", *(boundary + i));
+    printf("%f\t", *(boundary + i));
   }
   printf("\nthe dielectric:\n%f\n", *dielectric);
   printf("the shapes:\n");
