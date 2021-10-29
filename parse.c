@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <time.h>
 
 #define WORD_LEN    12
 #define SHAPEN_LEN  6
@@ -14,6 +15,13 @@
 #define DEBUG
 
 int main(int argc, char **argv) {
+
+#ifdef DEBUG
+  // measure the running time
+  clock_t startt, endt;
+  startt = clock();
+#endif
+
   // the Input Path INDex and the Output Path INDex
   int ipind, opind;
   int ch;
@@ -163,6 +171,11 @@ int main(int argc, char **argv) {
 #endif
 
   fclose(fp);
+
+#ifdef DEBUG
+  endt = clock();
+  printf("\ntime: %fs\n", (double) (endt - startt) / CLOCKS_PER_SEC);
+#endif
 
   return 0;
 }
