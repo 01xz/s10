@@ -91,7 +91,6 @@ int main(int argc, char **argv) {
     }
   }
   rewind(fp);
-  sprintf(shpn, INIT_SHAPE);
 #ifdef DEBUG
   printf("%d shapes and %d nets in total.\n", shpnm, netnm);
 #endif
