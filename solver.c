@@ -8,8 +8,8 @@ int main(void) {
   FILE * f_A, * f_b;
 
   // defination
-  cholmod_sparse * A, * b;
-  cholmod_dense * x;
+  cholmod_sparse * A;
+  cholmod_dense * x, * b;
   cholmod_factor * L;
   cholmod_common c;
 
@@ -34,7 +34,7 @@ int main(void) {
   }
 
   if ((f_b = fopen ("data_b.mtx", "r")) != NULL) {
-    b = cholmod_read_sparse(f_b, &c);
+    b = cholmod_read_dense(f_b, &c);
   } else {
     cholmod_free_sparse(&A, &c);
     cholmod_free_sparse(&b, &c);
@@ -54,7 +54,7 @@ int main(void) {
   // finish cholmod
   cholmod_free_factor(&L, &c);
   cholmod_free_sparse(&A, &c);
-  cholmod_free_sparse(&b, &c);
+  cholmod_free_dense(&b, &c);
   cholmod_free_dense(&x, &c);
   cholmod_finish(&c);
 
