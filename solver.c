@@ -24,20 +24,21 @@ int main(void) {
 
   // fill A and b
   if ((f_A = fopen ("data_A.mtx", "r")) != NULL) {
+    printf("reading A:\n");
     A = cholmod_read_sparse(f_A, &c);
   } else {
     cholmod_free_sparse(&A, &c);
-    cholmod_free_sparse(&b, &c);
     cholmod_finish(&c);
     printf("error while reading A.\n");
     return 0;
   }
 
   if ((f_b = fopen ("data_b.mtx", "r")) != NULL) {
+    printf("reading b:\n");
     b = cholmod_read_dense(f_b, &c);
   } else {
     cholmod_free_sparse(&A, &c);
-    cholmod_free_sparse(&b, &c);
+    cholmod_free_dense(&b, &c);
     cholmod_finish(&c);
     printf("error while reading b.\n");
     return 0;

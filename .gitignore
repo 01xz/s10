@@ -1,3 +1,4 @@
 .vscode
 parse
+solver
 *.data
