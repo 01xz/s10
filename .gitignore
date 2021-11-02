@@ -2,3 +2,5 @@
 parse
 solver
 *.data
+log.txt
+data_x.mtx
