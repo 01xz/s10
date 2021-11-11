@@ -164,7 +164,7 @@ int main(int argc, char **argv) {
   }
   fprintf(fp, "\n " INIT_SHAPE ":");
   for (int i = 0; i < shpnm; i++) {
-    fprintf(fp, "%*s%.8ffF", i ? 3 : 1, "", 0.00107424);
+    fprintf(fp, "%*s%gfF", i ? 3 : 1, "", 0.00107424);
   }
   fprintf(fp, "\n");
 #endif
