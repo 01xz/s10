@@ -37,7 +37,7 @@ typedef struct layout_field {
 } lf;
 
 lf * get_lf(FILE * fp);
-int * free_lf(lf * field);
+int free_lf(lf * f);
 
 #ifdef __cplusplus
 }
