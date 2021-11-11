@@ -18,3 +18,4 @@ double * rhs_generate(int n, ...);
 #endif
 
 #endif
+

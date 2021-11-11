@@ -11,20 +11,20 @@ int klusolver(const int n, const int * Ap, const int * Ai, const double * Ax, do
   if (!Ap || !Ai || !Ax || !x)
     goto PrintError;
 
-  if (!(sy = klu_analyze(n, Ap, Ai, c)))
+  if (!(sy = klu_analyze(n, Ap, Ai, &c)))
     goto PrintError;
 
-  if (!(nu = klu_factor(Ap, Ai, Ax, sy, c))) {
-    klu_free_symbolic(&sy, c) ;
+  if (!(nu = klu_factor(Ap, Ai, Ax, sy, &c))) {
+    klu_free_symbolic(&sy, &c) ;
     goto PrintError;
   }
 
   // solver Ax=b, A is n-by-n and b is size-n and stored in x
-  klu_solve(sy, nu, n, 1, x, c);
+  klu_solve(sy, nu, n, 1, x, &c);
   
   // free & return sucess
-  klu_free_numeric(&nu, c);
-  klu_free_symbolic(&sy, c);
+  klu_free_numeric(&nu, &c);
+  klu_free_symbolic(&sy, &c);
   return 1;
 
 PrintError:

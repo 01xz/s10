@@ -16,31 +16,31 @@
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
-// simple solver
-int klusolver(int n, int *Ap, int *Ai, double *Ax, double *x) {
+int klusolver(int n, int * Ap, int * Ai, double * Ax, double * x) {
   klu_common c;
   klu_symbolic * sy;
   klu_numeric * nu;
 
+  // set defaults
   klu_defaults(&c);
 
   if (!Ap || !Ai || !Ax || !x)
     goto PrintError;
 
-  if (!(sy = klu_analyze(n, Ap, Ai, c)))
+  if (!(sy = klu_analyze(n, Ap, Ai, &c)))
     goto PrintError;
 
-  if (!(nu = klu_factor(Ap, Ai, Ax, sy, c))) {
-    klu_free_symbolic(&sy, c) ;
+  if (!(nu = klu_factor(Ap, Ai, Ax, sy, &c))) {
+    klu_free_symbolic(&sy, &c) ;
     goto PrintError;
   }
 
   // solver Ax=b, A is n-by-n and b is size-n and stored in x
-  klu_solve(sy, nu, n, 1, x, c);
+  klu_solve(sy, nu, n, 1, x, &c);
   
   // free & return sucess
-  klu_free_numeric(&nu, c);
-  klu_free_symbolic(&sy, c);
+  klu_free_numeric(&nu, &c);
+  klu_free_symbolic(&sy, &c);
   return 1;
 
 PrintError:
@@ -275,7 +275,7 @@ static void klu_demo (int n, int *Ap, int *Ai, double *Ax, int isreal)
             {
                 B [i] = 0;
             }
-            if ((f = fopen ("cb", "r")) != NULL) {
+            if ((f = fopen ("../cb", "r")) != NULL) {
                 while (fscanf(f, "%d", &cd) == 1) {
                     B[cd] = 1;
                 }
@@ -371,6 +371,8 @@ int main (void)
     cholmod_common ch ;
     cholmod_start (&ch) ;
     A = cholmod_read_sparse (stdin, &ch) ;
+    FILE * f ;
+    clock_t startt, endt;
     if (A)
     {
         if (A->nrow != A->ncol || A->stype != 0
@@ -380,7 +382,43 @@ int main (void)
         }
         else
         {
-            klu_demo (A->nrow, A->p, A->i, A->x, A->xtype == CHOLMOD_REAL) ;
+            int n = A->nrow;
+            int cd;
+
+            double * x = malloc(n * sizeof(double)) ;
+            for (int i = 0; i < n; i++) {
+                *(x + i) = 0;
+            }
+            if ((f = fopen ("../cb", "r")) != NULL) {
+                while (fscanf(f, "%d", &cd) == 1) {
+                    x[cd] = 1;
+                }
+            } else {
+                printf("error while reading b.\n");
+            }
+            fclose(f);
+
+            // record start time
+            startt = clock();
+
+            klusolver(A->nrow, A->p, A->i, A->x, x) ;
+
+            // record end time
+            endt = clock();
+            printf("\nUsed time: %fs\n", (double) (endt - startt) / CLOCKS_PER_SEC);
+
+            if ((f = fopen ("x", "w")) != NULL) {
+                printf("writing x to file:\n");
+            } else {
+                printf("error while creating file x.\n");
+            }
+            // print x
+            for (int i = 0; i < n; i++) {
+                fprintf(f, "%g\n", *(x + i));
+            }
+            fclose(f);
+            printf("done\n");
+
         }
         cholmod_free_sparse (&A, &ch) ;
     }
