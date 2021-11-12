@@ -59,6 +59,7 @@ int main(int argc, char **argv) {
 
 #ifdef DEBUG
   // check the obtained data structure
+  printf("%d shapes and %d nets in total.\n", field->ns, field->nn);
   printf("check the obtained data structure:\n");
   printf("the boundary:\n");
   for (int i = 0; i < 4; i++) {
@@ -98,6 +99,8 @@ int main(int argc, char **argv) {
 #endif
 
   fclose(fp);
+
+  field = free_lf(field);
 
 #ifdef DEBUG
   endt = clock();

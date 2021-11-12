@@ -1,14 +1,12 @@
 CC = gcc
-CFLAGS = -std=c99 -O3 -Wall
+CFLAGS = -std=c99 -O3
 
 TARGET = main
 SRC = parser_demo.c parser.c
-OBJ = parser_demo.o parser.o
 
-$(TARGET): $(SRC)
-	$(CC) -o $@ $< $(CFLAGS)
+$(TARGET): $(SRC) parser.h
+	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
 	rm $(TARGET)
-	rm *.o
 

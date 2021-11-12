@@ -13,6 +13,7 @@ extern "C" {
 
 #define WORD_LEN    12
 #define SHAPEN_LEN  6
+#define MAX_NS      100
 #define RECT_SIZE   4
 #define TPZD_SIZE   16
 #define SHAPEG_NAME "net"
@@ -37,7 +38,7 @@ typedef struct layout_field {
 } lf;
 
 lf * get_lf(FILE * fp);
-int free_lf(lf * f);
+void * free_lf(lf * f);
 
 #ifdef __cplusplus
 }

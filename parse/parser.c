@@ -12,7 +12,12 @@ lf * get_lf(FILE * fp) {
   while (fscanf(fp, "%s", word) == 1) {
     if (!strcmp(word, shpn)) {
       f->ns++;
-      sprintf(shpn, SHAPEG_NAME "%d", f->ns);
+      if (f->ns < MAX_NS) {
+        sprintf(shpn, SHAPEG_NAME "%d", f->ns);
+      } else {
+        printf("number of shapes are out of range\n");
+        goto PrintError;
+      }
     }
     if (!strcmp(word, SHAPEG_NAME)) {
       f->nn++;
@@ -58,15 +63,30 @@ lf * get_lf(FILE * fp) {
   return f;
 
 PrintError:
-  printf("error occurred!\n");
+  printf("error occurred in get_lf()\n");
   exit(EXIT_FAILURE);
 }
 
-int free_lf(lf * f) {
-  if (f) {
-
-  } else {
-
+void * free_lf(lf * f) {
+  if (f != NULL) {
+    if (f->b) {
+      free(f->b);
+      f->b = NULL;
+    }
+    if (f->d) {
+      free(f->d);
+      f->d = NULL;
+    }
+    if (f->nets) {
+      free(f->nets);
+      f->nets = NULL;
+    }
+    if (f->shps) {
+      free(f->shps);
+      f->shps = NULL;
+    }
+    free(f);
   }
+  return NULL;
 }
 
