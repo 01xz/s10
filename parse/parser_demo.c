@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
 #endif
 
   // the Input Path INDex and the Output Path INDex
-  int ipind, opind;
+  int ipind = 0, opind = 0;
   FILE * fp;
 
   // options parsing related

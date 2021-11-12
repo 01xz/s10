@@ -2,4 +2,5 @@
 main
 log.txt
 *.data
+build
 

@@ -12,7 +12,7 @@ extern "C" {
 #include <time.h>
 
 #define WORD_LEN    12
-#define SHAPEN_LEN  6
+#define SHAPEN_LEN  15
 #define MAX_NS      100
 #define RECT_SIZE   4
 #define TPZD_SIZE   16
