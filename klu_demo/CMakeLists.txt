@@ -11,3 +11,4 @@ add_definitions(-O3 -Wall -std=c99)
 add_executable(kludemo kludemo.c)
 
 target_link_libraries(kludemo cholmod amd colamd camd ccolamd metis lapack blas klu m)
+
