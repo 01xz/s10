@@ -40,6 +40,9 @@ typedef struct layout_field {
 /**
  * get_lf - get the field infomation from the input.data 
  * @fp: the file pointer of the input.data
+ *
+ * get_lf will not close @fp, you may have to close @fp
+ * manually
  */
 lf * get_lf(FILE * fp);
 
