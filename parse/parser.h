@@ -37,7 +37,18 @@ typedef struct layout_field {
   int    * shps;
 } lf;
 
+/**
+ * get_lf - get the field infomation from the input.data 
+ * @fp: the file pointer of the input.data
+ */
 lf * get_lf(FILE * fp);
+
+/**
+ * free_lf - free the lf pointer
+ * @f: the lf pointer to be freed
+ *
+ * usage: f = free_lf(f)
+ */
 void * free_lf(lf * f);
 
 #ifdef __cplusplus
