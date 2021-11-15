@@ -28,7 +28,10 @@ lf * get_lf(FILE * fp) {
   // create memory for 'boundary' and 'dielectric'
   f->b = (double *) malloc(sizeof(double) * RECT_SIZE);
   f->d = (double *) malloc(sizeof(double));
-  // create 'nets' for recoding coordinates and 'shps' for recording different shapes
+  /**
+   * create 'nets' for recoding coordinates and 'shps'
+   * for recording different shapes
+   */
   f->nets = (double *) malloc(sizeof(double) * f->nn * RECT_SIZE);
   f->shps = (int *) malloc(sizeof(int) * f->ns);
 
