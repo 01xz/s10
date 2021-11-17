@@ -33,11 +33,25 @@ PrintError:
 }
 
 // TODO
+// make sure to fix the '...'
 cholmod_sparse * cholmod_generate(..., cholmod_common * cc) {
+  // TODO
+  // before filling in the matrix
+  // be sure to set the value of following variables
+  // number of rows and columns and the number of non-zero elements
   int nrows, ncols, nnz;
+
   cholmod_triplet * T = cholmod_allocate_triplet(nrows, ncols, nnz, 1, CHOLMOD_REAL, cc);
+
+  // TODO
   // fill the T->i T->j and T->x
   T->nnz = nnz;
+
+  // TODO
+  // you may fill in the matrix like this:
+  T->i[0] = 0;
+  T->j[0] = 0;
+  T->x[0] = 1.0;
 
   // convert triplet to sparse matrix
   cholmod_sparse * A = cholmod_triplet_to_sparse(T, nnz, cc);
@@ -52,7 +66,9 @@ cholmod_sparse * cholmod_generate(..., cholmod_common * cc) {
 }
 
 // TODO
+// make sure to fix the '...'
 double * rhs_generate(int n, ...) {
+  // x has the same size as the matrix A
   double * x = (double *) malloc(n * sizeof(double));
   if (x) {
     for (int i = 0; i < n; i++) {
@@ -63,8 +79,12 @@ double * rhs_generate(int n, ...) {
     return NULL;
   }
 
+  // TODO
   // build b here
+  // you may give an array named 'bidx'
+  // for recording the coordinates of the non-zero elements 
 
+  // TODO
   // fill the b into x
   for (int i = 0; i < bn; i++) {
     x[bidx[i]] = 1;
@@ -74,6 +94,7 @@ double * rhs_generate(int n, ...) {
 }
 
 // TODO
+// here is a simple demo using these functions
 int main(void) {
   // A common struct that cholmod always needs
   cholmod_common c;
