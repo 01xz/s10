@@ -255,70 +255,90 @@ int main(void)
 
 //cholmod_sparse *cholmod_generate(struct div_mesh *divmesh_x, struct div_mesh *divmesh_y, struct layout_field *field, struct nb_coord *nbc, cholmod_common *cc)
 //{
-//	// TODO
-//	// before filling in the matrix
-//	// be sure to set the value of following variables
-//	// number of rows and columns and the number of non-zero elements
 //	int flag = 1;
-//	int nrows, ncols, nnz;
-//	nrows = ncols = divmesh_x->in_num * divmesh_y->in_num;
-//	nnz = divmesh_x->in_num * divmesh_y->in_num * 5; //会多于非0；
-//
-//	int flag = 1;
-//	for (int i = 0; i <=divmesh_x->in_num; i++)
-//	{
-//		for (int j = 0; j <=divmesh_y->in_num; j++)
-//		{
-//			if ((i == 0) || (j == 0) || (i == divmesh_x->in_num ) || (j == divmesh_y->in_num))
-//			{
-//				T->i[k] = j * divmesh_x->in_num + i;
-//				T->j[k] = j * divmesh_x->in_num + i;
-//				T->x[k] = 1.0;
-//				flag = 0;
-//			}
-//
-//			for (int q = 0; q < field->ns; i++)
-//			{
-//				if ((i <= nbc->b_p[q][2]) && (i >= nbc->b_p[q][0]) && (j <= nbc->b_p[q][3]) && (j >= nbc->b_p[q][1]))
-//				{
-//					T->i[k] = j * divmesh_x->in_num + i;
-//					T->j[k] = j * divmesh_x->in_num + i;
-//					T->x[k] = 1.0;
-//					flag = 0;
-//				}
-//			}
-//
-//			if (flag == 1)
-//			{
-//
-//				T->i[k] = j * divmesh_x->in_num + i;
-//				T->j[k] = j * divmesh_x->in_num + i + 1;
-//				T->x[k] = (divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i];
-//				k++;
-//
-//				T->i[k] = j * divmesh_x->in_num + i;
-//				T->j[k] = j * divmesh_x->in_num + i - 1;
-//				T->x[k] = (divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i - 1];
-//				k++;
-//
-//				T->i[k] = j * divmesh_y->in_num + divmesh_x->in_num;
-//				T->j[k] = j * divmesh_y->in_num + divmesh_x->in_num ;
-//				T->x[k] = -(divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i] - (divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i - 1] - (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j] - (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j - 1];
-//				k++;
-//
-//				T->i[k] = j * divmesh_x->in_num + i;
-//				T->j[k] = (j + 1) * divmesh_x->in_num + i;
-//				T->x[k] = (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j];
-//				k++;
-//				T->i[k] = j * divmesh_x->in_num + i;
-//				T->j[k] = (j - 1) * divmesh_x->in_num + i;
-//				T->x[k] = (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j - 1];
-//				k++;
-//			}
-//
-//			k++;
-//			h = 1;
-//		}
+	int nrows, ncols, nnz;
+	nrows = ncols = divmesh_x->in_num * divmesh_y->in_num;
+	nnz = divmesh_x->in_num * divmesh_y->in_num * 5; //会多于非0；
+	long int k = 0;
+	//double u[447125];
+	//double v[447125];
+	//double x[447125];
+
+	double *u = (double*)malloc(447125 * sizeof(double));
+	if (u == NULL)
+		printf("Failed to allocate memory\n");
+	double *v = (double*)malloc(447125 * sizeof(double));
+	if (v == NULL)
+		printf("Failed to allocate memory\n");
+	
+	double *x = (double*)malloc(447125 * sizeof(double));
+	if (x == NULL)
+		printf("Failed to allocate memory\n");
+	double c, d, e, f;
+
+	
+	for (int j = 0; j <= divmesh_y->in_num; j++)
+	{
+		for (int i = 0; i <= divmesh_x->in_num; i++)
+		{
+			if ((i == 0) || (j == 0) || (i == divmesh_x->in_num) || (j == divmesh_y->in_num))
+			{
+				u[k] = j * divmesh_x->in_num + i;
+				v[k] = j * divmesh_x->in_num + i;
+				x[k] = 1.0;
+				flag = 0;
+			}
+
+			for (int q = 0; q < field->nn; q++)
+			{
+				if ((i <= nbc->b_p[q][2] ) && (i >= nbc->b_p[q][0]) && (j <= nbc->b_p[q][3] ) && (j >= nbc->b_p[q][1] ))
+				{
+					u[k] = j * divmesh_x->in_num + i;
+					v[k] = j * divmesh_x->in_num + i;
+					x[k] = 1.0;
+					flag = 0;
+				}
+			}
+
+			if (flag == 1)
+			{
+
+				c = divmesh_x->ins[i];
+				d = divmesh_x->ins[i - 1];
+				e = divmesh_y->ins[j];
+					f = divmesh_y->ins[j - 1];
+
+				u[k] = j * divmesh_x->in_num + i;
+				v[k] = j * divmesh_x->in_num + i + 1;
+				x[k] = (e + f) / c;
+				k++;
+
+				u[k] = j * divmesh_x->in_num + i;
+				v[k] = j * divmesh_x->in_num + i - 1;
+				x[k] = (e + f) / d;
+				k++;
+
+				u[k] = j * divmesh_y->in_num + i;
+				v[k] = j * divmesh_y->in_num + i;
+				x[k] = -(e + f) / c- (e + f) / d- (c + d) / e- (c + d) / f;
+				k++;
+
+				u[k] = j * divmesh_x->in_num + i;
+				v[k] = (j + 1) * divmesh_x->in_num + i;
+				x[k] = (c + d) / e;
+				k++;
+
+				u[k] = j * divmesh_x->in_num + i;
+				v[k] = (j - 1) * divmesh_x->in_num + i;
+				x[k] = (c + d) / f;
+		
+			}
+
+			k++;
+			flag = 1;
+		}
+	}
+
 //	}
 //
 //	int n = 0;
