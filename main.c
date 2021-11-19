@@ -1,6 +1,6 @@
 #include "stdio.h"
 #include "math.h"
-
+#include "stdlib.h"
 #define DIV 2
 #define RANGE3 192.0
 #define RANGE2 128.0
@@ -80,277 +80,284 @@ int main(void)
 	struct layout_field *field = &lf;
 
 	double **nets_coord_p = caluculate_coord(field->nets, field->ns, field->shps);
-	ms *min_x_p = malloc(sizeof(ms));
-	//struct min_space min_x_p;
-	min_apace_x(field->nn, field->nets, field->b, min_x_p);
-	//struct min_space min_y_p;
-	ms *min_y_p = malloc(sizeof(ms));
-	min_apace_y(field->nn, field->nets, field->b, min_y_p);
+	//ms *min_x_p = malloc(sizeof(ms));
+	struct min_space min_x_p;
+	min_apace_x(field->nn, field->nets, field->b, &min_x_p);
+	struct min_space min_y_p;
+	//ms *min_y_p = malloc(sizeof(ms));
+	min_apace_y(field->nn, field->nets, field->b, &min_y_p);
 
 	struct cal_space calspce_p;
-	calculate_space_x(field->b, min_x_p, ratio_nouni, ratio_uni, &calspce_p);
+	calculate_space_x(field->b, &min_x_p, ratio_nouni, ratio_uni, &calspce_p);
 
 	struct cal_space calspce_y_p;
-	calculate_space_y(field->b, min_y_p, ratio_nouni, ratio_uni, &calspce_y_p);
-	struct div_mesh *divmesh_x;
-	div_mesh_x(&calspce_p, ratio_uni, min_x_p, field->b, ratio_nouni, &divmesh_x);
-	struct div_mesh *divmesh_y;
-	div_mesh_y(&calspce_y_p, ratio_uni, min_y_p, field->b, ratio_nouni, &divmesh_y);
+	calculate_space_y(field->b, &min_y_p, ratio_nouni, ratio_uni, &calspce_y_p);
+	struct div_mesh divmesh_x;
+	div_mesh_x(&calspce_p, ratio_uni, &min_x_p, field->b, ratio_nouni, &divmesh_x);
+	struct div_mesh divmesh_y;
+	div_mesh_y(&calspce_y_p, ratio_uni, &min_y_p, field->b, ratio_nouni, &divmesh_y);
 
-	struct nb_coord *nbc;
-	nb_coord(&lf, min_y_p, min_x_p, &divmesh_x, &divmesh_y, nets_coord_p, &nbc);
+	struct nb_coord nbc;
+	nb_coord(&lf, &min_y_p, &min_x_p, &divmesh_x, &divmesh_y, nets_coord_p, &nbc);
+	free(divmesh_y.div_int);
+	free(divmesh_x.div_int);
+	free(min_y_p.coord_del_p);
+	free(min_x_p.coord_del_p);
+	
 
-	free(nets_coord_p);
+
+
+	free(&nets_coord_p);
 	return 0;
 }
 
 // TODO
 // make sure to fix the '...'
+//
+//void calculable_capacitor(struct layout_field *field, struct nb_coord *nbc, cholmod_triplet *T, struct div_mesh *divmesh_x, struct div_mesh *divmesh_y)
+//{
+//
+//	int len_z = 2;
+//	int len_grad = 1; //length_gradient_range = 1;
+//	double q = 0;
+//	double q1 = 0;
+//	double p = 0;
+//	double p1 = 0;
+//
+//	//z的大小需要比较出来
+//	double max_row = 0;
+//	double max_clumn = 0;
+//	for (int u = 0; u < field->nn; u++)
+//	{
+//		if (max_row < nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z - 1)
+//			max_row = nbc->n_p[u][3] - nbc->n_p[u][1]+ 2 * len_z - 1;
+//		if (max_clumn < nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z - 1)
+//			max_clumn = nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z - 1;
+//	}
+//
+//	double **z = (double **)malloc((max_row + 1) * sizeof(double));
+//	if (z == NULL)
+//		printf("Failed to allocate memory\n");
+//	else
+//	{
+//		for (int i = 0; i < (max_row + 1); ++i)
+//		{
+//			z[i] = (double *)malloc((max_clumn + 1) * sizeof(double));
+//			if (z[i] == NULL)
+//				printf("Failed to allocate memory\n");
+//		}
+//	}
+//
+//
+//	double *dx1 = (double *)malloc((max_row + 1 - 2 * len_grad + 1) * sizeof(double));
+//	if (dx1 == NULL)
+//		printf("Failed to allocate memory\n");
+//	double *dx2 = (double *)malloc((max_row + 1 - 2 * len_grad + 1) * sizeof(double));
+//	if (dx2 == NULL)
+//		printf("Failed to allocate memory\n");
+//	double *dy1 = (double *)malloc((max_clumn + 1 - 2 * len_grad + 1) * sizeof(double));
+//	if (dy1 == NULL)
+//		printf("Failed to allocate memory\n");
+//	double *dy2 = (double *)malloc((max_clumn + 1 - 2 * len_grad + 1) * sizeof(double));
+//	if (dy2 == NULL)
+//		printf("Failed to allocate memory\n");
+//
+//	double *C = (double *)malloc(field->ns * sizeof(double));
+//	if (C == NULL)
+//		printf("Failed to allocate memory\n");
+//
+//
+//
+//
+//////////////////////////////////////////////////////////////////////////
+//	for (int u = 0; u < field->ns; u++)
+//	{
+//		for (int j = 0; j < nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1; j++)
+//		{
+//			for (int i = 0; i < nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1;i++)
+//			{
+//				
+//				z[j][i] = T->x[(j + nbc->n_p[u][1] - len_z - 2) * divmesh_x->in_num + i + nbc->n_p[u][0] - len_z - 1];
+//			}
+//		}
+//
+//		//求场强，一共四条线
+//
+//		
+//		for (int j = len_grad; j < nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1 - len_grad; j++)
+//		{
+//			
+//			dx1[j] = (z[j, len_grad + 2 - 1] - z[j, len_grad - 1]) / (divmesh_x->ins[nbc->n_p[u][0] - 1 - 1] + divmesh_x->ins[nbc->n_p[u][0] - 2 - 1]);
+//			dx2[j] = -(z[j, nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1 - len_grad - 1 - 1] - z[j, nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1 - len_grad + 1 - 1]) / (divmesh_x->ins[nbc->n_p[u][2] + 1 - 1] + divmesh_x->ins[nbc->n_p[u][2]]);
+//			
+//		}
+//
+//		for (int i = len_grad; i < nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1 - len_grad; i++)
+//		{
+//			
+//			dy1[i] = (z[len_grad + 2 - 1, i] - z[len_grad - 1, i]) / (divmesh_y->ins[nbc->n_p[u][1] - 1 - 1] + divmesh_y->ins[nbc->n_p[u][1] - 2 - 1]);
+//			dy2[i] = -(z[nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1 - len_grad - 1 - 1, i] - z[nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1 - len_grad + 1 - 1, i]) / (divmesh_y->ins[nbc->n_p[u][3] - 1] + divmesh_y->ins[nbc->n_p[u][3] + 1 - 1]);
+//			
+//		}
+//
+//	
+//
+//		for (int v = len_grad; v < nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1 - len_grad - 1; v++)
+//		{
+//			if (dy1[v] < 0)
+//				dy1[v] = -dy1[v];
+//			if (dy1[v + 1] < 0)
+//				dy1[v + 1] = -dy1[v + 1];
+//			p = p + divmesh_x->ins[v + nbc->n_p[u][0] - 1 - len_z ] * (dy1[v] + dy1[v + 1]) / 2;
+//		}
+//
+//
+//
+//		for (int v = len_grad; v < nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1 - len_grad - 1; v++)
+//		{
+//			if (dy2[v] < 0)
+//				dy2[v] = -dy2[v];
+//			if (dy2[v + 1] < 0)
+//				dy2[v + 1] = -dy2[v + 1];
+//			q = q + divmesh_x->ins[v + nbc->n_p[u][0] - 1 - len_z] * (dy2[v] + dy2[v + 1]) / 2;
+//		}
+//
+//	
+//		for (int v = len_grad; v < nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1 - len_grad - 1; v++)
+//		{
+//			if (dx1[v] < 0)
+//				dx1[v] = -dx1[v];
+//			if (dx1[v + 1] < 0)
+//				dx1[v + 1] = -dx1[v + 1];
+//			q1 = q1 + divmesh_y->ins[v + nbc->n_p[u][1] - 1 - len_z ] * (dx1[v] + dx1[v + 1]) / 2;
+//		}
+//
+//		for (int v = len_grad; v < nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1 - len_grad - 1; v++)
+//		{
+//			if (dx2[v] < 0)
+//				dx2[v] = -dx2[v];
+//			if (dx2[v + 1] < 0)
+//				dx2[v + 1] = -dx2[v + 1];
+//			p1 = p1 + divmesh_y->ins[v + nbc->n_p[u][1] - 1 - len_z ] * (dx2[v] + dx2[v + 1]) / 2;
+//		}
+//
+//		C[u] = field->d*8.854*(p+q+p1+q)/1000;
+//	}
+//
+//	free(dx1);
+//	free(dx2);
+//	free(dy1);
+//	free(dy2);
+//	free(z);
+//
+//	free(nbc->n_p);
+//}
 
-void calculable_capacitor(struct layout_field *field, struct nb_coord *nbc, cholmod_triplet *T, struct div_mesh *divmesh_x, struct div_mesh *divmesh_y)
-{
-
-	int len_z = 2;
-	int len_grad = 1; //length_gradient_range = 1;
-	double q = 0;
-	double q1 = 0;
-	double p = 0;
-	double p1 = 0;
-
-	//z的大小需要比较出来
-	double max_row = 0;
-	double max_clumn = 0;
-	for (int u = 0; u < field->nn; u++)
-	{
-		if (max_row < nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z - 1)
-			max_row = nbc->n_p[u][3] - nbc->n_p[u][1]+ 2 * len_z - 1;
-		if (max_clumn < nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z - 1)
-			max_clumn = nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z - 1;
-	}
-
-	double **z = (double **)malloc((max_row + 1) * sizeof(double));
-	if (z == NULL)
-		printf("Failed to allocate memory\n");
-	else
-	{
-		for (int i = 0; i < (max_row + 1); ++i)
-		{
-			z[i] = (double *)malloc((max_clumn + 1) * sizeof(double));
-			if (z[i] == NULL)
-				printf("Failed to allocate memory\n");
-		}
-	}
-
-
-	double *dx1 = (double *)malloc((max_row + 1 - 2 * len_grad + 1) * sizeof(double));
-	if (dx1 == NULL)
-		printf("Failed to allocate memory\n");
-	double *dx2 = (double *)malloc((max_row + 1 - 2 * len_grad + 1) * sizeof(double));
-	if (dx2 == NULL)
-		printf("Failed to allocate memory\n");
-	double *dy1 = (double *)malloc((max_clumn + 1 - 2 * len_grad + 1) * sizeof(double));
-	if (dy1 == NULL)
-		printf("Failed to allocate memory\n");
-	double *dy2 = (double *)malloc((max_clumn + 1 - 2 * len_grad + 1) * sizeof(double));
-	if (dy2 == NULL)
-		printf("Failed to allocate memory\n");
-
-	double *C = (double *)malloc(field->ns * sizeof(double));
-	if (C == NULL)
-		printf("Failed to allocate memory\n");
-
-
-
-
-////////////////////////////////////////////////////////////////////////
-	for (int u = 0; u < field->ns; u++)
-	{
-		for (int j = 0; j < nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1; j++)
-		{
-			for (int i = 0; i < nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1;i++)
-			{
-				
-				z[j][i] = T->x[(j + nbc->n_p[u][1] - len_z - 2) * divmesh_x->in_num + i + nbc->n_p[u][0] - len_z - 1];
-			}
-		}
-
-		//求场强，一共四条线
-
-		
-		for (int j = len_grad; j < nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1 - len_grad; j++)
-		{
-			
-			dx1[j] = (z[j, len_grad + 2 - 1] - z[j, len_grad - 1]) / (divmesh_x->ins[nbc->n_p[u][0] - 1 - 1] + divmesh_x->ins[nbc->n_p[u][0] - 2 - 1]);
-			dx2[j] = -(z[j, nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1 - len_grad - 1 - 1] - z[j, nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1 - len_grad + 1 - 1]) / (divmesh_x->ins[nbc->n_p[u][2] + 1 - 1] + divmesh_x->ins[nbc->n_p[u][2]]);
-			
-		}
-
-		for (int i = len_grad; i < nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1 - len_grad; i++)
-		{
-			
-			dy1[i] = (z[len_grad + 2 - 1, i] - z[len_grad - 1, i]) / (divmesh_y->ins[nbc->n_p[u][1] - 1 - 1] + divmesh_y->ins[nbc->n_p[u][1] - 2 - 1]);
-			dy2[i] = -(z[nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1 - len_grad - 1 - 1, i] - z[nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1 - len_grad + 1 - 1, i]) / (divmesh_y->ins[nbc->n_p[u][3] - 1] + divmesh_y->ins[nbc->n_p[u][3] + 1 - 1]);
-			
-		}
-
-	
-
-		for (int v = len_grad; v < nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1 - len_grad - 1; v++)
-		{
-			if (dy1[v] < 0)
-				dy1[v] = -dy1[v];
-			if (dy1[v + 1] < 0)
-				dy1[v + 1] = -dy1[v + 1];
-			p = p + divmesh_x->ins[v + nbc->n_p[u][0] - 1 - len_z ] * (dy1[v] + dy1[v + 1]) / 2;
-		}
-
-
-
-		for (int v = len_grad; v < nbc->n_p[u][2] - nbc->n_p[u][0] + 2 * len_z + 1 - len_grad - 1; v++)
-		{
-			if (dy2[v] < 0)
-				dy2[v] = -dy2[v];
-			if (dy2[v + 1] < 0)
-				dy2[v + 1] = -dy2[v + 1];
-			q = q + divmesh_x->ins[v + nbc->n_p[u][0] - 1 - len_z] * (dy2[v] + dy2[v + 1]) / 2;
-		}
-
-	
-		for (int v = len_grad; v < nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1 - len_grad - 1; v++)
-		{
-			if (dx1[v] < 0)
-				dx1[v] = -dx1[v];
-			if (dx1[v + 1] < 0)
-				dx1[v + 1] = -dx1[v + 1];
-			q1 = q1 + divmesh_y->ins[v + nbc->n_p[u][1] - 1 - len_z ] * (dx1[v] + dx1[v + 1]) / 2;
-		}
-
-		for (int v = len_grad; v < nbc->n_p[u][3] - nbc->n_p[u][1] + 2 * len_z + 1 - len_grad - 1; v++)
-		{
-			if (dx2[v] < 0)
-				dx2[v] = -dx2[v];
-			if (dx2[v + 1] < 0)
-				dx2[v + 1] = -dx2[v + 1];
-			p1 = p1 + divmesh_y->ins[v + nbc->n_p[u][1] - 1 - len_z ] * (dx2[v] + dx2[v + 1]) / 2;
-		}
-
-		C[u] = field->d*8.854*(p+q+p1+q)/1000;
-	}
-
-	free(dx1);
-	free(dx2);
-	free(dy1);
-	free(dy2);
-	free(z);
-
-	free(nbc->n_p);
-}
-
-cholmod_sparse *cholmod_generate(struct div_mesh *divmesh_x, struct div_mesh *divmesh_y, struct layout_field *field, struct nb_coord *nbc, cholmod_common *cc)
-{
-	// TODO
-	// before filling in the matrix
-	// be sure to set the value of following variables
-	// number of rows and columns and the number of non-zero elements
-	int flag = 1;
-	int nrows, ncols, nnz;
-	nrows = ncols = divmesh_x->in_num * divmesh_y->in_num;
-	nnz = divmesh_x->in_num * divmesh_y->in_num * 5; //会多于非0；
-
-	int flag = 1;
-	for (int i = 0; i <=divmesh_x->in_num; i++)
-	{
-		for (int j = 0; j <=divmesh_y->in_num; j++)
-		{
-			if ((i == 0) || (j == 0) || (i == divmesh_x->in_num ) || (j == divmesh_y->in_num))
-			{
-				T->i[k] = j * divmesh_x->in_num + i;
-				T->j[k] = j * divmesh_x->in_num + i;
-				T->x[k] = 1.0;
-				flag = 0;
-			}
-
-			for (int q = 0; q < field->ns; i++)
-			{
-				if ((i <= nbc->b_p[q][2]) && (i >= nbc->b_p[q][0]) && (j <= nbc->b_p[q][3]) && (j >= nbc->b_p[q][1]))
-				{
-					T->i[k] = j * divmesh_x->in_num + i;
-					T->j[k] = j * divmesh_x->in_num + i;
-					T->x[k] = 1.0;
-					flag = 0;
-				}
-			}
-
-			if (flag == 1)
-			{
-
-				T->i[k] = j * divmesh_x->in_num + i;
-				T->j[k] = j * divmesh_x->in_num + i + 1;
-				T->x[k] = (divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i];
-				k++;
-
-				T->i[k] = j * divmesh_x->in_num + i;
-				T->j[k] = j * divmesh_x->in_num + i - 1;
-				T->x[k] = (divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i - 1];
-				k++;
-
-				T->i[k] = j * divmesh_y->in_num + divmesh_x->in_num;
-				T->j[k] = j * divmesh_y->in_num + divmesh_x->in_num ;
-				T->x[k] = -(divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i] - (divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i - 1] - (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j] - (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j - 1];
-				k++;
-
-				T->i[k] = j * divmesh_x->in_num + i;
-				T->j[k] = (j + 1) * divmesh_x->in_num + i;
-				T->x[k] = (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j];
-				k++;
-				T->i[k] = j * divmesh_x->in_num + i;
-				T->j[k] = (j - 1) * divmesh_x->in_num + i;
-				T->x[k] = (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j - 1];
-				k++;
-			}
-
-			k++;
-			h = 1;
-		}
-	}
-
-	int n = 0;
-
-
-	
-
-	if (field->shps[0] == 4)
-	{
-		for (int u = 0; u < 4; u++)
-		{
-			for (int i = nbc->b_p[u][0]; i < nbc->b_p[u][2]; i++)
-			{
-				for (int j = nbc->b_p[u][1]; j < nbc->b_p[u][3]; j++))
-				{
-					bidx[n] = j * divmesh_x->in_num + i;
-					x[bidx[n]] = 1;
-					n++;
-				}
-			}
-		}
-		else
-		{
-			for (int i = nbc->b_p[0][0]; i < nbc->b_p[0][2]; i++)
-			{
-				for (int(int j = nbc->b_p[0][1]; j < nbc->b_p[0][3]; j++))
-				{
-					bidx[n] = j * divmesh_x->in_num + i;
-					x[bidx[n]] = 1;
-					n++;
-				}
-			}
-		}
-	}
-
-free(nbc->b_p);
-free(divmesh_y->ins);
-free(divmesh_x->ins);
-}
+//cholmod_sparse *cholmod_generate(struct div_mesh *divmesh_x, struct div_mesh *divmesh_y, struct layout_field *field, struct nb_coord *nbc, cholmod_common *cc)
+//{
+//	// TODO
+//	// before filling in the matrix
+//	// be sure to set the value of following variables
+//	// number of rows and columns and the number of non-zero elements
+//	int flag = 1;
+//	int nrows, ncols, nnz;
+//	nrows = ncols = divmesh_x->in_num * divmesh_y->in_num;
+//	nnz = divmesh_x->in_num * divmesh_y->in_num * 5; //会多于非0；
+//
+//	int flag = 1;
+//	for (int i = 0; i <=divmesh_x->in_num; i++)
+//	{
+//		for (int j = 0; j <=divmesh_y->in_num; j++)
+//		{
+//			if ((i == 0) || (j == 0) || (i == divmesh_x->in_num ) || (j == divmesh_y->in_num))
+//			{
+//				T->i[k] = j * divmesh_x->in_num + i;
+//				T->j[k] = j * divmesh_x->in_num + i;
+//				T->x[k] = 1.0;
+//				flag = 0;
+//			}
+//
+//			for (int q = 0; q < field->ns; i++)
+//			{
+//				if ((i <= nbc->b_p[q][2]) && (i >= nbc->b_p[q][0]) && (j <= nbc->b_p[q][3]) && (j >= nbc->b_p[q][1]))
+//				{
+//					T->i[k] = j * divmesh_x->in_num + i;
+//					T->j[k] = j * divmesh_x->in_num + i;
+//					T->x[k] = 1.0;
+//					flag = 0;
+//				}
+//			}
+//
+//			if (flag == 1)
+//			{
+//
+//				T->i[k] = j * divmesh_x->in_num + i;
+//				T->j[k] = j * divmesh_x->in_num + i + 1;
+//				T->x[k] = (divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i];
+//				k++;
+//
+//				T->i[k] = j * divmesh_x->in_num + i;
+//				T->j[k] = j * divmesh_x->in_num + i - 1;
+//				T->x[k] = (divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i - 1];
+//				k++;
+//
+//				T->i[k] = j * divmesh_y->in_num + divmesh_x->in_num;
+//				T->j[k] = j * divmesh_y->in_num + divmesh_x->in_num ;
+//				T->x[k] = -(divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i] - (divmesh_y->ins[j] + divmesh_y->ins[j - 1]) / divmesh_x->ins[i - 1] - (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j] - (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j - 1];
+//				k++;
+//
+//				T->i[k] = j * divmesh_x->in_num + i;
+//				T->j[k] = (j + 1) * divmesh_x->in_num + i;
+//				T->x[k] = (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j];
+//				k++;
+//				T->i[k] = j * divmesh_x->in_num + i;
+//				T->j[k] = (j - 1) * divmesh_x->in_num + i;
+//				T->x[k] = (divmesh_x->ins[i] + divmesh_x->ins[i - 1]) / divmesh_y->ins[j - 1];
+//				k++;
+//			}
+//
+//			k++;
+//			h = 1;
+//		}
+//	}
+//
+//	int n = 0;
+//
+//
+//	
+//
+//	if (field->shps[0] == 4)
+//	{
+//		for (int u = 0; u < 4; u++)
+//		{
+//			for (int i = nbc->b_p[u][0]; i < nbc->b_p[u][2]; i++)
+//			{
+//				for (int j = nbc->b_p[u][1]; j < nbc->b_p[u][3]; j++))
+//				{
+//					bidx[n] = j * divmesh_x->in_num + i;
+//					x[bidx[n]] = 1;
+//					n++;
+//				}
+//			}
+//		}
+//		else
+//		{
+//			for (int i = nbc->b_p[0][0]; i < nbc->b_p[0][2]; i++)
+//			{
+//				for (int(int j = nbc->b_p[0][1]; j < nbc->b_p[0][3]; j++))
+//				{
+//					bidx[n] = j * divmesh_x->in_num + i;
+//					x[bidx[n]] = 1;
+//					n++;
+//				}
+//			}
+//		}
+//	}
+//
+//free(nbc->b_p);
+//free(divmesh_y->ins);
+//free(divmesh_x->ins);
+//}
 //}
 
 void nb_coord(struct layout_field *field, struct min_space *min_y_p, struct min_space *min_x_p, struct div_mesh *divmesh_x, struct div_mesh *divmesh_y, double **nets_coord, struct nb_coord *nbc)
@@ -433,13 +440,7 @@ void nb_coord(struct layout_field *field, struct min_space *min_y_p, struct min_
 			}
 		}
 	}
-	free(divmesh_y->div_int);
-	free(divmesh_x->div_int);
-	free(min_y_p->coord_del_p);
-
-	free(min_x_p->coord_del_p);
-
-	printf(1);
+	
 }
 void div_mesh_x(struct cal_space *calspce_p, double ratio_uni[], struct min_space *min_x_p, double b[], double ratio_nouni[], struct div_mesh *divmesh_x)
 {
@@ -467,7 +468,7 @@ void div_mesh_x(struct cal_space *calspce_p, double ratio_uni[], struct min_spac
 			insert_r[cnt_r + 1] = insert_r[cnt_r] * ratio_nouni[calspce_p->flag_1 - 1];
 			cnt_r++;
 		}
-		divnums_r = round((min_x_p->coord_del_p[0] - b[0] - sum_r - RANGE0 * min_x_p->min_spac) / insert_r[cnt_r - 1]);
+		divnums_r = (int) round((min_x_p->coord_del_p[0] - b[0] - sum_r - RANGE0 * min_x_p->min_spac) / insert_r[cnt_r - 1]);
 		divunif_r = (min_x_p->coord_del_p[0] - b[0] - sum_r - RANGE0 * min_x_p->min_spac) / divnums_r;
 
 		for (int i = 0; i < divnums_r; i++)
@@ -528,7 +529,7 @@ void div_mesh_x(struct cal_space *calspce_p, double ratio_uni[], struct min_spac
 				cnt_r++;
 			}
 
-			divnums_x = round((min_x_p->coord_del_p[i + 1] - min_x_p->coord_del_p[i] - 2 * sum_x - 2 * RANGE0 * min_x_p->min_spac) / x_array[cnt_r - 1]);
+			divnums_x = (int)round((min_x_p->coord_del_p[i + 1] - min_x_p->coord_del_p[i] - 2 * sum_x - 2 * RANGE0 * min_x_p->min_spac) / x_array[cnt_r - 1]);
 			divunif_x = (min_x_p->coord_del_p[i + 1] - min_x_p->coord_del_p[i] - 2 * sum_x - 2 * RANGE0 * min_x_p->min_spac) / divnums_x;
 
 			//清醒的时候重新检查这里
@@ -573,7 +574,7 @@ void div_mesh_x(struct cal_space *calspce_p, double ratio_uni[], struct min_spac
 			}
 
 			divmesh_x->div_int[cntint_x] = divmesh_x->in_num;
-			cntint_x++;min_y_p->coord_del_p
+			cntint_x++;
 		}
 	}
 	
@@ -595,7 +596,7 @@ void div_mesh_x(struct cal_space *calspce_p, double ratio_uni[], struct min_spac
 			insert_l[cnt_l + 1] = insert_l[cnt_l] * ratio_nouni[calspce_p->flag_2 - 1];
 			cnt_l++;
 		}
-		divnums_l = round((b[2] - min_x_p->coord_del_p[min_x_p->cnt] - sum_l - RANGE0 * min_x_p->min_spac) / insert_l[cnt_l - 1]);
+		divnums_l = (int) round((b[2] - min_x_p->coord_del_p[min_x_p->cnt] - sum_l - RANGE0 * min_x_p->min_spac) / insert_l[cnt_l - 1]);
 		divunif_l = (b[2] - min_x_p->coord_del_p[min_x_p->cnt] - sum_l - RANGE0 * min_x_p->min_spac) / divnums_l;
 
 		for (int i = 0; i < RANGE0; i++)
@@ -652,7 +653,7 @@ void div_mesh_y(struct cal_space *calspce_y_p, double ratio_uni[], struct min_sp
 			insert_h[cnt_h + 1] = insert_h[cnt_h] * ratio_nouni[calspce_y_p->flag_2 - 1];
 			cnt_h++;
 		}
-		divnums_h = round((min_y_p->coord_del_p[0] - b[1] - sum_h - RANGE0 * min_y_p->min_spac) / insert_h[cnt_h - 1]);
+		divnums_h = (int) round((min_y_p->coord_del_p[0] - b[1] - sum_h - RANGE0 * min_y_p->min_spac) / insert_h[cnt_h - 1]);
 		divunif_h = (min_y_p->coord_del_p[0] - b[1] - sum_h - RANGE0 * min_y_p->min_spac) / divnums_h;
 
 		for (int i = 0; i < divnums_h; i++)
@@ -713,7 +714,7 @@ void div_mesh_y(struct cal_space *calspce_y_p, double ratio_uni[], struct min_sp
 				cnt_h++;
 			}
 
-			divnums_y = round((min_y_p->coord_del_p[i + 1] - min_y_p->coord_del_p[i] - 2 * sum_y - 2 * RANGE0 * min_y_p->min_spac) / y_array[cnt_h - 1]);
+			divnums_y = (int)round((min_y_p->coord_del_p[i + 1] - min_y_p->coord_del_p[i] - 2 * sum_y - 2 * RANGE0 * min_y_p->min_spac) / y_array[cnt_h - 1]);
 			divunif_y = (min_y_p->coord_del_p[i + 1] - min_y_p->coord_del_p[i] - 2 * sum_y - 2 * RANGE0 * min_y_p->min_spac) / divnums_y;
 
 			//清醒的时候重新检查这里
@@ -781,7 +782,7 @@ void div_mesh_y(struct cal_space *calspce_y_p, double ratio_uni[], struct min_sp
 			insert_low[cnt_low + 1] = insert_low[cnt_low] * ratio_nouni[calspce_y_p->flag_1 - 1];
 			cnt_low++;
 		}
-		divnums_low = round((b[3] - min_y_p->coord_del_p[min_y_p->cnt] - sum_low - RANGE0 * min_y_p->min_spac) / insert_low[cnt_low - 1]);
+		divnums_low = (int)round((b[3] - min_y_p->coord_del_p[min_y_p->cnt] - sum_low - RANGE0 * min_y_p->min_spac) / insert_low[cnt_low - 1]);
 		divunif_low = (b[3] - min_y_p->coord_del_p[min_y_p->cnt] - sum_low - RANGE0 * min_y_p->min_spac) / divnums_low;
 
 		for (int i = 0; i < RANGE0; i++)
@@ -840,7 +841,7 @@ void calculate_space_x(double b[], struct min_space *min_x_p, double ratio_nouni
 			len_right = len_right * len_mul_right;
 			calspce_p->cnt_1 = calspce_p->cnt_1 + 3;
 		}
-		calspce_p->numbs = calspce_p->numbs + calspce_p->cnt_1 + round(len_uni_right * (1 - ratio_uni[calspce_p->flag_1 - 1]) / ratio_uni[calspce_p->flag_1 - 1] / pow(ratio_nouni[calspce_p->flag_1 - 1], calspce_p->cnt_1 - 3)) + RANGE0;
+		calspce_p->numbs = calspce_p->numbs + calspce_p->cnt_1 + (int)round(len_uni_right * (1.0 - ratio_uni[calspce_p->flag_1 - 1]) / ratio_uni[calspce_p->flag_1 - 1] / pow(ratio_nouni[calspce_p->flag_1 - 1], (double)calspce_p->cnt_1 - 3.0)) + (int)RANGE0;
 	}
 	else
 	{
@@ -872,11 +873,11 @@ void calculate_space_x(double b[], struct min_space *min_x_p, double ratio_nouni
 			len_left = len_left * len_mul_left;
 			calspce_p->cnt_2 = calspce_p->cnt_2 + 3;
 		}
-		calspce_p->numbs = calspce_p->numbs + calspce_p->cnt_2 + round(len_uni_left * (1 - ratio_uni[calspce_p->flag_2 - 1]) / ratio_uni[calspce_p->flag_2 - 1] / pow(ratio_nouni[calspce_p->flag_2 - 1], calspce_p->cnt_2 - 3)) + RANGE0;
+		calspce_p->numbs = calspce_p->numbs + calspce_p->cnt_2 + (int)round(len_uni_left * (1.0 - ratio_uni[calspce_p->flag_2 - 1]) / ratio_uni[calspce_p->flag_2 - 1] / pow(ratio_nouni[calspce_p->flag_2 - 1], calspce_p->cnt_2 - 3.0)) + (int)RANGE0;
 	}
 	else
 	{
-		calspce_p->cnt_2 = round((b[0] - min_x_p->coord_del_p[min_x_p->cnt]) / min_x_p->min_spac);
+		calspce_p->cnt_2 = (int) round((b[0] - min_x_p->coord_del_p[min_x_p->cnt]) / min_x_p->min_spac);
 		calspce_p->numbs = calspce_p->numbs + calspce_p->cnt_2;
 	}
 
@@ -917,11 +918,11 @@ void calculate_space_x(double b[], struct min_space *min_x_p, double ratio_nouni
 				if (calspce_p->max_lencnt < calspce_p->lencnt[i])
 					calspce_p->max_lencnt = calspce_p->lencnt[i];
 			}
-			calspce_p->numbs = calspce_p->numbs + 2 * calspce_p->lencnt[i] + round((2 * long_x * (1 - ratio_uni[calspce_p->divtype_mid_p[i] - 1]) / ratio_uni[calspce_p->divtype_mid_p[i] - 1]) / pow(ratio_nouni[calspce_p->divtype_mid_p[i] - 1], calspce_p->lencnt[i] - 3)) + 2 * RANGE0;
+			calspce_p->numbs = calspce_p->numbs + 2 * calspce_p->lencnt[i] + (int)round((2 * long_x * (1 - ratio_uni[calspce_p->divtype_mid_p[i] - 1]) / ratio_uni[calspce_p->divtype_mid_p[i] - 1]) / pow(ratio_nouni[calspce_p->divtype_mid_p[i] - 1], calspce_p->lencnt[i] - 3)) + 2 * (int)RANGE0;
 		}
 		else
 		{
-			calspce_p->lencnt[i] = round((min_x_p->coord_del_p[i + 1] - min_x_p->coord_del_p[i]) / min_x_p->min_spac);
+			calspce_p->lencnt[i] =(int) round((min_x_p->coord_del_p[i + 1] - min_x_p->coord_del_p[i]) / min_x_p->min_spac);
 
 			calspce_p->numbs = calspce_p->numbs + calspce_p->lencnt[i];
 		}
@@ -958,11 +959,11 @@ void calculate_space_y(double b[], struct min_space *min_y_p, double ratio_nouni
 			len_low = len_low * len_mul_low;
 			calspce_y_p->cnt_2 = calspce_y_p->cnt_2 + 3;
 		}
-		calspce_y_p->numbs = calspce_y_p->numbs + calspce_y_p->cnt_2 + round(len_uni_low * (1 - ratio_uni[calspce_y_p->flag_2 - 1]) / ratio_uni[calspce_y_p->flag_2 - 1] / pow(ratio_nouni[calspce_y_p->flag_2 - 1], calspce_y_p->cnt_2 - 3)) + RANGE0;
+		calspce_y_p->numbs = calspce_y_p->numbs + calspce_y_p->cnt_2 + (int)round(len_uni_low * (1 - ratio_uni[calspce_y_p->flag_2 - 1]) / ratio_uni[calspce_y_p->flag_2 - 1] / pow(ratio_nouni[calspce_y_p->flag_2 - 1], calspce_y_p->cnt_2 - 3)) + (int)RANGE0;
 	}
 	else
 	{
-		calspce_y_p->cnt_2 = round((b[1] - min_y_p->coord_del_p[min_y_p->cnt]) / min_y_p->min_spac);
+		calspce_y_p->cnt_2 = (int)round((b[1] - min_y_p->coord_del_p[min_y_p->cnt]) / min_y_p->min_spac);
 		calspce_y_p->numbs = calspce_y_p->numbs + calspce_y_p->cnt_2;
 	}
 
@@ -992,11 +993,11 @@ void calculate_space_y(double b[], struct min_space *min_y_p, double ratio_nouni
 			len_high = len_high * len_mul_high;
 			calspce_y_p->cnt_1 = calspce_y_p->cnt_1 + 3;
 		}
-		calspce_y_p->numbs = calspce_y_p->numbs + calspce_y_p->cnt_1 + round(len_uni_high * (1 - ratio_uni[calspce_y_p->flag_1 - 1]) / ratio_uni[calspce_y_p->flag_1 - 1] / pow(ratio_nouni[calspce_y_p->flag_1 - 1], calspce_y_p->cnt_1 - 3)) + RANGE0;
+		calspce_y_p->numbs = calspce_y_p->numbs + calspce_y_p->cnt_1 + (int)round(len_uni_high * (1.0 - ratio_uni[calspce_y_p->flag_1 - 1]) / ratio_uni[calspce_y_p->flag_1 - 1] / pow(ratio_nouni[calspce_y_p->flag_1 - 1], calspce_y_p->cnt_1 - 3)) + (int)RANGE0;
 	}
 	else
 	{
-		calspce_y_p->cnt_1 = round((b[3] - min_y_p->coord_del_p[min_y_p->cnt]) / min_y_p->min_spac);
+		calspce_y_p->cnt_1 =(int) round((b[3] - min_y_p->coord_del_p[min_y_p->cnt]) / min_y_p->min_spac);
 		calspce_y_p->numbs = calspce_y_p->numbs + calspce_y_p->cnt_1;
 	}
 	///////////////////////////////////////////////////
@@ -1038,11 +1039,11 @@ void calculate_space_y(double b[], struct min_space *min_y_p, double ratio_nouni
 				if (calspce_y_p->max_lencnt < calspce_y_p->lencnt[i])
 					calspce_y_p->max_lencnt = calspce_y_p->lencnt[i];
 			}
-			calspce_y_p->numbs = calspce_y_p->numbs + 2 * calspce_y_p->lencnt[i] + round((2 * long_y * (1 - ratio_uni[calspce_y_p->divtype_mid_p[i] - 1]) / ratio_uni[calspce_y_p->divtype_mid_p[i] - 1]) / pow(ratio_nouni[calspce_y_p->divtype_mid_p[i] - 1], calspce_y_p->lencnt[i] - 3)) + 2 * RANGE0;
+			calspce_y_p->numbs = calspce_y_p->numbs + 2 * calspce_y_p->lencnt[i] + (int)round((2 * long_y * (1 - ratio_uni[calspce_y_p->divtype_mid_p[i] - 1]) / ratio_uni[calspce_y_p->divtype_mid_p[i] - 1]) / pow(ratio_nouni[calspce_y_p->divtype_mid_p[i] - 1], calspce_y_p->lencnt[i] - 3)) + 2 *(int) RANGE0;
 		}
 		else
 		{
-			calspce_y_p->lencnt[i] = round((min_y_p->coord_del_p[i + 1] - min_y_p->coord_del_p[i]) / min_y_p->min_spac);
+			calspce_y_p->lencnt[i] = (int)round((min_y_p->coord_del_p[i + 1] - min_y_p->coord_del_p[i]) / min_y_p->min_spac);
 
 			calspce_y_p->numbs = calspce_y_p->numbs + calspce_y_p->lencnt[i];
 		}
@@ -1181,7 +1182,7 @@ double **caluculate_coord(double nets[], int numbs_ns, int shps[])
 {
 
 	int cnt_rect = 0;
-	double **nets_coord = (double *)malloc(numbs_ns * sizeof(double));
+	double **nets_coord = (double **)malloc(numbs_ns * sizeof(double));
 	if (nets_coord == NULL)
 		printf("Failed to create memory of nets_coord \n");
 	else
