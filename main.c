@@ -47,14 +47,14 @@ struct cal_space
 
 struct div_mesh
 {
-	double *div_int;
+	int *div_int;
 	int in_num; //insert_numbs
 	double *ins;
 };
 struct nb_coord
 {
-	double **n_p;
-	double **b_p;
+	int **n_p;
+	int **b_p;
 };
 //Declare functions
 double **caluculate_coord(double nets[], int numbs_nn, int shps[]);
@@ -363,14 +363,14 @@ int main(void)
 void nb_coord(struct layout_field *field, struct min_space *min_y_p, struct min_space *min_x_p, struct div_mesh *divmesh_x, struct div_mesh *divmesh_y, double **nets_coord, struct nb_coord *nbc)
 {
 	//block_int
-	nbc->b_p = (double **)malloc(field->nn * sizeof(double));
+	nbc->b_p = (int **)malloc(field->nn * sizeof(int));
 	if (nbc->b_p == NULL)
 		printf("Failed to allocate memory\n");
 	else
 	{
 		for (int i = 0; i < field->nn; ++i)
 		{
-			nbc->b_p[i] = (double *)malloc(4 * sizeof(double));
+			nbc->b_p[i] = (int *)malloc(4 * sizeof(int));
 			if (nbc->b_p[i] == NULL)
 				printf("Failed to allocate memory\n");
 		}
@@ -388,7 +388,7 @@ void nb_coord(struct layout_field *field, struct min_space *min_y_p, struct min_
 	}
 	for (int i = 0; i < field->nn; i++)
 	{
-		for (int j = 0; j < min_y_p->cnt; j++)
+		for (int j = 0; j <= min_y_p->cnt; j++)
 		{
 			if ((field->nets[i * 4 + 1] > min_y_p->coord_del_p[j] - min_y_p->min_spac) && (field->nets[i * 4 + 1] < min_y_p->coord_del_p[j] + min_y_p->min_spac))
 				nbc->b_p[i][1] = divmesh_y->div_int[j];
@@ -400,14 +400,14 @@ void nb_coord(struct layout_field *field, struct min_space *min_y_p, struct min_
 		}
 	}
 
-	nbc->n_p = (double **)malloc((field->ns) * sizeof(double));
+	nbc->n_p = (int **)malloc((field->ns) * sizeof(int));
 	if (nbc->n_p == NULL)
 		printf("Failed to allocate memory\n");
 	else
 	{
 		for (int i = 0; i < field->ns; ++i)
 		{
-			nbc->n_p[i] = (double *)malloc(4 * sizeof(double));
+			nbc->n_p[i] = (int *)malloc(4 * sizeof(int));
 			if (nbc->n_p[i] == NULL)
 				printf("Failed to allocate memory\n");
 		}
@@ -440,7 +440,7 @@ void nb_coord(struct layout_field *field, struct min_space *min_y_p, struct min_
 			}
 		}
 	}
-	
+
 }
 void div_mesh_x(struct cal_space *calspce_p, double ratio_uni[], struct min_space *min_x_p, double b[], double ratio_nouni[], struct div_mesh *divmesh_x)
 {
@@ -499,7 +499,7 @@ void div_mesh_x(struct cal_space *calspce_p, double ratio_uni[], struct min_spac
 
 	free(insert_r);
 	//细划分区格点坐标
-	divmesh_x->div_int = (double *)malloc(calspce_p->numbs * sizeof(double));
+	divmesh_x->div_int = (int *)malloc(calspce_p->numbs * sizeof(int));
 	if (divmesh_x->div_int == NULL)
 		printf("Failed to create memory of divtype_mid \n");
 	int cntint_x = 0;
@@ -606,7 +606,7 @@ void div_mesh_x(struct cal_space *calspce_p, double ratio_uni[], struct min_spac
 		}
 		for (int i = 0; i < cnt_l; i++)
 		{
-			divmesh_x->ins[divmesh_x->in_num] = insert_r[i];
+			divmesh_x->ins[divmesh_x->in_num] = insert_l[i];
 			divmesh_x->in_num++;
 		}
 		for (int i = 0; i < divnums_l; i++)
@@ -684,7 +684,7 @@ void div_mesh_y(struct cal_space *calspce_y_p, double ratio_uni[], struct min_sp
 
 	
 	//细划分区格点坐标
-	divmesh_y->div_int = (double *)malloc(calspce_y_p->numbs * sizeof(double));
+	divmesh_y->div_int = (int *)malloc(calspce_y_p->numbs * sizeof(int));
 	if (divmesh_y->ins == NULL)
 		printf("Failed to create memory of divtype_mid \n");
 	int cntint_y = 0;
@@ -792,7 +792,7 @@ void div_mesh_y(struct cal_space *calspce_y_p, double ratio_uni[], struct min_sp
 		}
 		for (int i = 0; i < cnt_low; i++)
 		{
-			divmesh_y->ins[divmesh_y->in_num] = insert_h[i];
+			divmesh_y->ins[divmesh_y->in_num] = insert_low[i];
 			divmesh_y->in_num++;
 		}
 		for (int i = 0; i < divnums_low; i++)
@@ -887,7 +887,7 @@ void calculate_space_x(double b[], struct min_space *min_x_p, double ratio_nouni
 	calspce_p->divtype_mid_p = (int *)malloc(min_x_p->cnt * sizeof(int));
 	if (calspce_p->divtype_mid_p == NULL)
 		printf("Failed to create memory of divtype_mid \n");
-	calspce_p->lencnt = (int *)malloc((min_x_p->cnt - 1) * sizeof(int));
+	calspce_p->lencnt = (int *)malloc(min_x_p->cnt* sizeof(int));
 	if (calspce_p->lencnt == NULL)
 		printf("Failed to create memory of divtype_mid \n");
 	double len_x = 0;
@@ -905,7 +905,7 @@ void calculate_space_x(double b[], struct min_space *min_x_p, double ratio_nouni
 		else if ((min_x_p->coord_del_p[i + 1] - min_x_p->coord_del_p[i]) < (RANGE2 - 0.01) * min_x_p->min_spac)
 			calspce_p->divtype_mid_p[i] = 0;
 
-		if (calspce_p->divtype_mid_p[i] > 0)
+		if (  calspce_p->divtype_mid_p[i] > 0)
 		{
 			calspce_p->lencnt[i] = 3;
 			len_x = pow(ratio_nouni[calspce_p->divtype_mid_p[i] - 1], 3);
@@ -924,7 +924,7 @@ void calculate_space_x(double b[], struct min_space *min_x_p, double ratio_nouni
 		{
 			calspce_p->lencnt[i] =(int) round((min_x_p->coord_del_p[i + 1] - min_x_p->coord_del_p[i]) / min_x_p->min_spac);
 
-			calspce_p->numbs = calspce_p->numbs + calspce_p->lencnt[i];
+			calspce_p->numbs = (calspce_p->numbs + calspce_p->lencnt[i]);
 		}
 	}
 }
